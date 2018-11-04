@@ -1,0 +1,172 @@
+//Left click to random face.
+//Right click to roll the dice, then left to stop.
+
+int diceSize = 120;
+
+void setup() {
+  frameRate(10);
+  size(1280, 720);
+  Player[] players = new Player[8];
+  Dices onlyDice = new Dices();
+  int[] currentSet = newSet(10);
+  noLoop();
+}
+
+void gameLoop(){
+  
+  int maxTurn = 10;
+  int rollsPerTurn = 2;
+  
+  for(int turns=0;turns<maxTurn; turns++){
+    playerLoop(turns);
+  }
+}
+
+void playerLoop(int turns){
+  for(int i=0; i<players.length; i++){
+    int rollID = 0, result=0;
+    int[] dices = newSet(10);
+    while(rollID<2){
+      result = getResult(rollID,dices);
+      if(result == 10){
+        if(rollID == 1){
+          //strike
+          rollID=2;
+        }
+        else{
+          //spare
+        }
+      }
+      else{
+        //knockdown
+      }
+    }
+    players[i].update(turns,result);
+  }
+}
+
+
+
+int getResult(int rollID,int[] dices){
+  int count = 10-dices.length;
+  for(int i=0; i<dices.length; i++){
+    if(dices[i] == rollID){
+      count = 10;
+      break;
+    }
+    if(dices[i] < 4){ // 0 for strike, 1 for spare， 2,3 for knockdown
+      count++;
+    }
+  }
+  return count;
+}  
+
+class Dices{
+  int[] dices;
+  
+  Dices(){
+    dices = newSet(10);
+  }
+
+  void update(int[] newSet){
+    dices = newSet;
+  }
+  
+  void drawDiceBoard(){
+    background(#43936B);
+    int X = 100, Y = 100, offset = 160,breakPoint;
+    if(dices.length == 9){
+      breakPoint = 3;
+    }
+    else{
+      breakPoint = round(dices.length/2);
+    }
+    for (int i=0; i<dices.length; i++){
+      if(i == breakPoint || i == breakPoint*2){
+        Y += offset;
+      }
+      drawdice(X+offset*(i%breakPoint),Y,dices[i]);
+    }
+  }
+
+void drawdice(int X, int Y,int side) {
+
+    //dice
+    noStroke();
+    fill(#FFF3D6);
+    rectMode(CENTER);
+    rect(X, Y, diceSize, diceSize, diceSize/5);
+
+    //dots
+    fill(50);
+
+    if (side == 1 || side == 3 || side == 5)
+      ellipse(X, Y, diceSize/5, diceSize/5); 
+    if (side == 2 || side == 3 || side == 4 || side == 5 || side == 6) { 
+      ellipse(X - diceSize/4, Y - diceSize/4, diceSize/5, diceSize/5);
+      ellipse(X + diceSize/4, Y + diceSize/4, diceSize/5, diceSize/5);
+    }
+    if (side == 4 || side == 5 || side == 6) {
+      ellipse(X - diceSize/4, Y + diceSize/4, diceSize/5, diceSize/5);
+      ellipse(X + diceSize/4, Y - diceSize/4, diceSize/5, diceSize/5);
+    }
+    if (side == 6) {
+      ellipse(X, Y - diceSize/4, diceSize/5, diceSize/5);
+      ellipse(X, Y + diceSize/4, diceSize/5, diceSize/5);
+    }
+
+  }
+}
+
+void draw(){
+  if (mousePressed && mouseButton == LEFT)
+      noLoop();
+  
+  onlyDice.update(currentSet);
+  onlyDice.drawDiceBoard();
+}
+
+void mousePressed() {
+  loop();
+}
+
+class Player{
+
+ String name;
+ int[] score = new int[10];
+
+  Player(){
+   this.name = "player";
+ }
+
+ Player(String name ){
+   this.name = name;
+ }
+ 
+ void update(int index,int score){
+   this.score[index] = score;
+ }
+ 
+ int get(int index){
+   return this.score[index];
+ }
+ 
+ int[] getBoard(){
+   return this.score;
+ }
+ 
+ String getName(){
+   return name;
+ }
+}
+
+
+
+int[] newSet(int num){
+  int[] dices = new int[num];
+  for(int i=0; i<num; i++){
+    dices[i] = floor(random(0,6));
+  }
+  return dices;
+}
+  
