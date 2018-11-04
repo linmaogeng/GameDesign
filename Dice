@@ -2,14 +2,13 @@
 //Right click to roll the dice, then left to stop.
 
 int diceSize = 120;
+Player[] players = new Player[8];
+Dices onlyDice = new Dices();
+int[] currentSet = newSet(10);
 
 void setup() {
   frameRate(10);
   size(1280, 720);
-  Player[] players = new Player[8];
-  Dices onlyDice = new Dices();
-  int[] currentSet = newSet(10);
-  noLoop();
 }
 
 void gameLoop(){
@@ -119,11 +118,12 @@ void drawdice(int X, int Y,int side) {
 }
 
 void draw(){
-  if (mousePressed && mouseButton == LEFT)
-      noLoop();
-  
-  onlyDice.update(currentSet);
-  onlyDice.drawDiceBoard();
+  //onlyDice.update(currentSet);
+  onlyDice.update(newSet(9));
+	onlyDice.drawDiceBoard();
+	
+if (mousePressed && mouseButton == LEFT)
+    noLoop();
 }
 
 void mousePressed() {
